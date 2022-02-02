@@ -9,16 +9,20 @@ cd ..
 . ddb/vars.sh
 . xgt/vars.sh
 
-echo Installing RPM/DEB packages
-
+echo "Installing RPM/DEB packages"
 if [[ ! -z $(which yum) ]]; then
+    sudo yum install -y curl maven
     sudo yum install -y python3-pip python3-devel zstd unzip unixODBC-devel wget g++
     sudo yum install -y cmake openssl-devel
 elif [[ ! -z $(which apt) ]]; then
     sudo apt update
+    sudo apt install -y curl maven
     sudo apt install -y python3-pip python3-dev zstd unzip unixodbc-dev wget g++
     sudo apt install -y cmake libssl-dev
 fi
+
+#sudo systemctl disable mysql
+#sudo systemctl stop mysql
 
 avg/install-dependencies.sh
 mdb/install-dependencies.sh
