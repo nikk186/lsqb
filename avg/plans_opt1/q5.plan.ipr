@@ -1,0 +1,33 @@
+projection(
+  selection(
+    join({
+      selection(
+        join({
+          access(%0, "HAS_TAG", @physical = sortedScan, @bind = src),
+          access(%1, "REPLY_OF", @physical = sortedScan, @bind = src),
+        }, {
+          src(%0) = src(%1),
+        }, @physical = mj),
+        {
+          label(src(%1)) \ni "Comment",
+          label(trg(%0)) \ni "Tag",
+        }
+      ),
+      access(%2, "HAS_TAG", @physical = sortedMap, @bind = src),
+    }, {
+      trg(%1) = src(%2),
+    }, @physical = ilj),
+    {
+      trg(%2) != trg(%0),
+      label(trg(%2)) \ni "Tag",
+      %2 != %0,
+      label(src(%2)) \ni "Message",
+    }
+  ),
+  {
+    %tag1 = trg(%2),
+    %message = src(%2),
+    %comment = src(%1),
+    %tag2 = trg(%0),
+  }
+);

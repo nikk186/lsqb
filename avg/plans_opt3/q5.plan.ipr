@@ -1,0 +1,57 @@
+$has_tag = access(%0, "HAS_TAG", @physical = sortedScan, @bind = src).
+projection(
+  selection(
+    join({
+      projection(
+        join({
+          selection(
+            projection(
+              $has_tag,
+              {
+                %src0 = src(%0),
+                %edg0 = %0,
+                %trg0 = trg(%0),
+                %lbl0 = label(src(%0)),
+              }
+            ),
+            {
+              %lbl0 \ni "Comment",
+            }
+          ),
+          access(%1, "REPLY_OF", @physical = sortedScan, @bind = src),
+        }, {
+          %src0 = src(%1),
+        }, @physical = mj),
+        {
+          %src0 = %src0,
+          %edg0 = %edg0,
+          %trg0 = %trg0,
+          %src1 = src(%1),
+          %trg1 = trg(%1),
+        }
+      ),
+      selection(
+        projection(
+          $has_tag,
+          {
+            %src2 = src(%0),
+            %edg2 = %0,
+            %trg2 = trg(%0),
+            %lbl2 = label(src(%0)),
+          }
+        ),
+        {
+          %lbl2 \ni "Message",
+        }
+      ),
+    }, {
+      %trg1 = %src2,
+    }, @physical = hj),
+    {
+      %edg2 != %edg0,
+      %trg2 != %trg0,
+    }
+  ),
+  {
+  }
+);

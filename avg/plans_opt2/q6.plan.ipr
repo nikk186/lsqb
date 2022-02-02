@@ -1,0 +1,55 @@
+projection(
+  join({
+    selection(
+      join({
+        union({
+          projection(
+            access(%0, "KNOWS"),
+            {
+              %1 = src(%0),
+              %0 = %0,
+              %2 = trg(%0),
+            }
+          ),
+          projection(
+            access(%0, "KNOWS"),
+            {
+              %1 = trg(%0),
+              %0 = %0,
+              %2 = src(%0),
+            }
+          ),
+        }),
+        union({
+          projection(
+            access(%3, "KNOWS"),
+            {
+              %4 = src(%3),
+              %3 = %3,
+              %5 = trg(%3),
+            }
+          ),
+          projection(
+            access(%3, "KNOWS"),
+            {
+              %4 = trg(%3),
+              %3 = %3,
+              %5 = src(%3),
+            }
+          ),
+        }),
+      }, {
+        %4 = %2,
+      }, @physical = hj),
+      {
+        %1 != %5,
+        %0 != %3,
+      }
+    ),
+    access(%6, "HAS_INTEREST", @physical = sortedMap, @bind = src),
+  }, {
+    src(%6) = %5,
+  }, @physical = ilj),
+  {
+  }
+);

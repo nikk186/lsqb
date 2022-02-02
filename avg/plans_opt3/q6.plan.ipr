@@ -1,0 +1,54 @@
+$knows = access(%0, "KNOWS").
+$knows_bi = union({
+  projection(
+    $knows,
+    {
+      %src = src(%0),
+      %edg = %0,
+      %trg = trg(%0),
+    }
+  ),
+  projection(
+    $knows,
+    {
+      %src = trg(%0),
+      %edg = %0,
+      %trg = src(%0),
+    }
+  ),
+}).
+projection(
+  join({
+    selection(
+      join({
+        projection(
+          $knows_bi,
+          {
+            %src0 = %src,
+            %edg0 = %edg,
+            %trg0 = %trg,
+          }
+        ),
+        projection(
+          $knows_bi,
+          {
+            %src1 = %src,
+            %edg1 = %edg,
+            %trg1 = %trg,
+          }
+        ),
+      }, {
+        %trg0 = %src1,
+      }, @physical = hj),
+      {
+        %src0 != %trg1,
+        %edg0 != %edg1,
+      }
+    ),
+    access(%2, "HAS_INTEREST", @physical = sortedMap, @bind = src),
+  }, {
+    src(%2) = %trg1,
+  }, @physical = ilj),
+  {
+  }
+);

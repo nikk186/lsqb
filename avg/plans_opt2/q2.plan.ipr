@@ -1,0 +1,57 @@
+projection(
+  selection(
+    selection(
+      join({
+        join({
+          selection(
+            access(%0, "REPLY_OF", @physical = sortedScan, @bind = src),
+            {
+              label(trg(%0)) \ni "Post",
+            }
+          ),
+          selection(
+            access(%1, "HAS_CREATOR", @physical = sortedScan, @bind = src),
+            {
+              label(src(%1)) \ni "Comment",
+            }
+          ),
+        }, {
+          src(%0) = src(%1),
+        }, @physical = mj),
+        join({
+          union({
+            projection(
+              access(%2, "KNOWS"),
+              {
+                %3 = src(%2),
+                %2 = %2,
+                %4 = trg(%2),
+              }
+            ),
+            projection(
+              access(%2, "KNOWS"),
+              {
+                %3 = trg(%2),
+                %2 = %2,
+                %4 = src(%2),
+              }
+            ),
+          }),
+          access(%5, "HAS_CREATOR", @physical = sortedMap, @bind = trg),
+        }, {
+          trg(%5) = %4,
+        }, @physical = ilj),
+      }, {
+        trg(%0) = src(%5),
+      }, @physical = hj),
+      {
+        trg(%1) = %3,
+      }
+    ),
+    {
+      %1 != %5,
+    }
+  ),
+  {
+  }
+);

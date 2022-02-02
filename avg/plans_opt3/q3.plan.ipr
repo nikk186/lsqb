@@ -1,0 +1,146 @@
+$knows = access(%0, "KNOWS").
+$knows_bi = union({
+  projection(
+    $knows,
+    {
+      %src = src(%0),
+      %edg = %0,
+      %trg = trg(%0),
+    }
+  ),
+  projection(
+    $knows,
+    {
+      %src = trg(%0),
+      %edg = %0,
+      %trg = src(%0),
+    }
+  ),
+}).
+$person_country = projection(
+  join({
+    selection(
+      projection(
+        access(%0, "IS_LOCATED_IN", @physical = sortedScan, @bind = trg),
+        {
+          %src0 = src(%0),
+          %trg0 = trg(%0),
+          %lbl0 = label(src(%0)),
+        }
+      ),
+      {
+        %lbl0 \ni "Person",
+      }
+    ),
+    selection(
+      projection(
+        access(%1, "IS_PART_OF", @physical = sortedScan, @bind = src),
+        {
+          %src1 = src(%1),
+          %trg1 = trg(%1),
+          %lbl1 = label(trg(%1)),
+        }
+      ),
+      {
+        %lbl1 \ni "Country",
+      }
+    ),
+  }, {
+    %trg0 = %src1,
+  }, @physical = mj),
+  {
+    %src = %src0,
+    %trg = %trg1,
+  }
+).
+projection(
+  selection(
+    join({
+      projection(
+        $person_country,
+        {
+          %src0 = %src,
+          %trg0 = %trg,
+        }
+      ),
+      selection(
+        join({
+          projection(
+            $person_country,
+            {
+              %src1 = %src,
+              %trg1 = %trg,
+            }
+          ),
+          join({
+            projection(
+              $person_country,
+              {
+                %src2 = %src,
+                %trg2 = %trg,
+              }
+            ),
+            selection(
+              join({
+                projection(
+                  $knows_bi,
+                  {
+                    %src3 = %src,
+                    %edg3 = %edg,
+                    %trg3 = %trg,
+                  }
+                ),
+                selection(
+                  join({
+                    projection(
+                      $knows_bi,
+                      {
+                        %src4 = %src,
+                        %edg4 = %edg,
+                        %trg4 = %trg,
+                      }
+                    ),
+                    projection(
+                      $knows_bi,
+                      {
+                        %src5 = %src,
+                        %edg5 = %edg,
+                        %trg5 = %trg,
+                      }
+                    ),
+                  }, {
+                    %trg4 = %src5,
+                  }, @physical = hj),
+                  {
+                    %edg4 != %edg5,
+                  }
+                ),
+              }, {
+                %trg3 = %src4,
+              }, @physical = hj),
+              {
+                %trg5 = %src3,
+                %edg3 != %edg4,
+                %edg3 != %edg5,
+              }
+            ),
+          }, {
+            %src2 = %src5,
+          }, @physical = hj),
+        }, {
+          %src1 = %src4,
+        }, @physical = hj),
+        {
+          %trg1 = %trg2,
+        }
+      ),
+    }, {
+      %src0 = %src3,
+    }, @physical = hj),
+    {
+      %trg0 = %trg2,
+    }
+  ),
+  {
+  }
+);

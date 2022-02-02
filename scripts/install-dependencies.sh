@@ -20,6 +20,8 @@ elif [[ ! -z $(which apt) ]]; then
     sudo apt install -y cmake libssl-dev
 fi
 
+avg/install-dependencies.sh
+
 echo Installing DuckDB
 
 # DuckDB binary

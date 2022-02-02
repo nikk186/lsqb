@@ -1,0 +1,43 @@
+projection(
+  selection(
+    join({
+      selection(
+        join({
+          access(%0, "REPLY_OF", @physical = sortedScan, @bind = trg),
+          access(%1, "HAS_CREATOR", @physical = sortedScan, @bind = src),
+        }, {
+          trg(%0) = src(%1),
+        }, @physical = mj),
+        {
+          label(trg(%1)) \ni "Person",
+          label(src(%0)) \ni "Comment",
+        }
+      ),
+      selection(
+        join({
+          access(%2, "LIKES", @physical = sortedScan, @bind = trg),
+          access(%3, "HAS_TAG", @physical = sortedScan, @bind = src),
+        }, {
+          trg(%2) = src(%3),
+        }, @physical = mj),
+        {
+          label(trg(%3)) \ni "Tag",
+          label(src(%3)) \ni "Message",
+          label(src(%2)) \ni "Person",
+        }
+      ),
+    }, {
+      trg(%2) = trg(%0),
+    }, @physical = hj),
+    {
+      %3 != %1,
+    }
+  ),
+  {
+    %message = src(%3),
+    %creator = trg(%1),
+    %liker = src(%2),
+    %comment = src(%0),
+  }
+);
+

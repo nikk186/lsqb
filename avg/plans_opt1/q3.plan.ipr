@@ -1,0 +1,148 @@
+projection(
+  selection(
+    join({
+      selection(
+        join({
+          access(%0, "IS_PART_OF", @physical = sortedScan, @bind = src),
+          access(%1, "IS_LOCATED_IN", @physical = sortedScan, @bind = trg),
+        }, {
+          src(%0) = trg(%1),
+        }, @physical = mj),
+        {
+          label(trg(%0)) \ni "Country",
+          label(src(%1)) \ni "Person",
+          label(trg(%1)) \ni "City",
+        }
+      ),
+      selection(
+        join({
+          selection(
+            join({
+              access(%2, "IS_PART_OF", @physical = sortedScan, @bind = src),
+              access(%3, "IS_LOCATED_IN", @physical = sortedScan, @bind = trg),
+            }, {
+              src(%2) = trg(%3),
+            }, @physical = mj),
+            {
+              label(src(%3)) \ni "Person",
+              label(trg(%3)) \ni "City",
+            }
+          ),
+          join({
+            selection(
+              join({
+                access(%4, "IS_PART_OF", @physical = sortedScan, @bind = src),
+                access(%5, "IS_LOCATED_IN", @physical = sortedScan, @bind = trg),
+              }, {
+                src(%4) = trg(%5),
+              }, @physical = mj),
+              {
+                label(src(%5)) \ni "Person",
+                label(trg(%5)) \ni "City",
+              }
+            ),
+            selection(
+              selection(
+                join({
+                  union({
+                    projection(
+                      access(%6, "KNOWS"),
+                      {
+                        %7 = src(%6),
+                        %6 = %6,
+                        %8 = trg(%6),
+                      }
+                    ),
+                    projection(
+                      access(%6, "KNOWS"),
+                      {
+                        %7 = trg(%6),
+                        %6 = %6,
+                        %8 = src(%6),
+                      }
+                    ),
+                  }),
+                  selection(
+                    join({
+                      union({
+                        projection(
+                          access(%9, "KNOWS"),
+                          {
+                            %10 = src(%9),
+                            %9 = %9,
+                            %11 = trg(%9),
+                          }
+                        ),
+                        projection(
+                          access(%9, "KNOWS"),
+                          {
+                            %10 = trg(%9),
+                            %9 = %9,
+                            %11 = src(%9),
+                          }
+                        ),
+                      }),
+                      union({
+                        projection(
+                          access(%12, "KNOWS"),
+                          {
+                            %13 = src(%12),
+                            %12 = %12,
+                            %14 = trg(%12),
+                          }
+                        ),
+                        projection(
+                          access(%12, "KNOWS"),
+                          {
+                            %13 = trg(%12),
+                            %12 = %12,
+                            %14 = src(%12),
+                          }
+                        ),
+                      }),
+                    }, {
+                      %13 = %11,
+                    }, @physical = hj),
+                    {
+                      %9 != %12,
+                    }
+                  ),
+                }, {
+                  %7 = %14,
+                }, @physical = hj),
+                {
+                  %8 = %10,
+                }
+              ),
+              {
+                %9 != %6,
+                %12 != %6,
+              }
+            ),
+          }, {
+            %8 = src(%5),
+          }, @physical = hj),
+        }, {
+          trg(%2) = trg(%4),
+        }, @physical = hj),
+        {
+          src(%3) = %11,
+        }
+      ),
+    }, {
+      trg(%0) = trg(%2),
+    }, @physical = hj),
+    {
+      src(%1) = %14,
+    }
+  ),
+  {
+    %country = trg(%0),
+    %person1 = src(%5),
+    %city1 = trg(%5),
+    %person2 = src(%3),
+    %city2 = trg(%3),
+    %person3 = src(%1),
+    %city3 = trg(%1),
+  }
+);

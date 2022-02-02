@@ -1,0 +1,56 @@
+projection(
+  join({
+      join({
+        join({
+          access(%0, "HAS_MEMBER", @physical = sortedScan, @bind = trg),
+          selection(
+            access(%1, "IS_LOCATED_IN", @physical = sortedScan, @bind = src),
+            {
+              label(src(%1)) \ni "Person",
+            }
+          ),
+        }, {
+          trg(%0) = src(%1),
+        }, @physical = mj),
+        selection(
+          access(%2, "IS_PART_OF", @physical = sortedMap, @bind = src),
+          {
+            label(trg(%2)) \ni "Country",
+            label(src(%2)) \ni "City",
+          }
+        ),
+      }, {
+        trg(%1) = src(%2),
+      }, @physical = hj),
+    join({
+        join({
+          selection(
+            access(%3, "REPLY_OF", @physical = sortedScan, @bind = trg),
+            {
+              label(src(%3)) \ni "Comment",
+            }
+          ),
+          access(%4, "CONTAINER_OF", @physical = sortedScan, @bind = trg),
+        }, {
+          trg(%3) = trg(%4),
+        }, @physical = mj),
+        join({
+          access(%5, "HAS_TYPE", @physical = sortedScan, @bind = src),
+          selection(
+            access(%6, "HAS_TAG", @physical = sortedScan, @bind = trg),
+            {
+              label(src(%6)) \ni "Comment",
+            }
+          ),
+        }, {
+          src(%5) = trg(%6),
+        }, @physical = mj),
+    }, {
+      src(%6) = src(%3),
+    }, @physical = hj),
+  }, {
+    src(%4) = src(%0),
+  }, @physical = hj),
+  {
+  }
+);

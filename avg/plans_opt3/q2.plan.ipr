@@ -1,0 +1,80 @@
+$knows = access(%2, "KNOWS").
+$has_creator = access(%3, "HAS_CREATOR").
+projection(
+  selection(
+    selection(
+      join({
+        join({
+          selection(
+            projection(
+              access(%0, "REPLY_OF", @physical = sortedScan, @bind = src),
+              {
+                %src0 = src(%0),
+                %trg0 = trg(%0),
+                %lbl0 = label(trg(%0)),
+              }
+            ),
+            {
+              %lbl0 \ni "Post",
+            }
+          ),
+          selection(
+            projection(
+              $has_creator,
+              {
+                %src1 = src(%3),
+                %edg1 = %3,
+                %trg1 = trg(%3),
+                %lbl1 = label(src(%3)),
+              }
+            ),
+            {
+              %lbl1 \ni "Comment",
+            }
+          ),
+        }, {
+          %src0 = %src1,
+        }, @physical = mj),
+        join({
+          union({
+            projection(
+              $knows,
+              {
+                %src2 = src(%2),
+                %trg2 = trg(%2),
+              }
+            ),
+            projection(
+              $knows,
+              {
+                %src2 = trg(%2),
+                %trg2 = src(%2),
+              }
+            ),
+          }),
+          projection(
+            $has_creator,
+            {
+              %src3 = src(%3),
+              %edg3 = %3,
+              %trg3 = trg(%3),
+            }
+          ),
+        }, {
+          %trg3 = %trg2,
+        }, @physical = hj),
+      }, {
+        %trg0 = %src3,
+      }, @physical = hj),
+      {
+        %trg1 = %src2,
+      }
+    ),
+    {
+      %edg1 != %edg3,
+    }
+  ),
+  {
+  }
+);
+

@@ -1,0 +1,100 @@
+projection(
+  join({
+    projection(
+      join({
+        join({
+          selection(
+            projection(
+              access(%0, "IS_PART_OF", @physical = sortedScan, @bind = src),
+              {
+                %src0 = src(%0),
+                %trg0 = trg(%0),
+                %lbl0 = label(src(%0)),
+              }
+            ),
+            {
+              %lbl0 \ni "City",
+            }
+          ),
+          selection(
+            projection(
+              access(%1, "IS_LOCATED_IN", @physical = sortedScan, @bind = trg),
+              {
+                %src1 = src(%1),
+                %trg1 = trg(%1),
+                %lbl1 = label(src(%1)),
+              }
+            ),
+            {
+              %lbl1 \ni "Person",
+            }
+          ),
+        }, {
+          %src0 = %trg1,
+        }, @physical = mj),
+        access(%2, "HAS_MEMBER", @physical = sortedMap, @bind = trg),
+      }, {
+        %src1 = trg(%2),
+      }, @physical = ilj),
+      {
+        %src2 = src(%2),
+      }
+    ),
+    join({
+      projection(
+        join({
+          selection(
+            projection(
+              access(%4, "REPLY_OF", @physical = sortedScan, @bind = trg),
+              {
+                %src4 = src(%4),
+                %trg4 = trg(%4),
+                %lbl4 = label(trg(%4)),
+              }
+            ),
+            {
+              %lbl4 \ni "Post",
+            }
+          ),
+          access(%3, "CONTAINER_OF", @physical = sortedScan, @bind = trg),
+        }, {
+          %trg4 = trg(%3),
+        }, @physical = mj),
+        {
+          %src3 = src(%3),
+          %src4 = %src4,
+        }
+      ),
+      projection(
+        join({
+          selection(
+            projection(
+              access(%5, "HAS_TAG"),
+              {
+                %src5 = src(%5),
+                %trg5 = trg(%5),
+                %lbl5 = label(src(%5)),
+              }
+            ),
+            {
+              %lbl5 \ni "Comment",
+            }
+          ),
+          access(%6, "HAS_TYPE", @physical = sortedMap, @bind = src),
+        }, {
+          %trg5 = src(%6),
+        }, @physical = ilj),
+        {
+          %src5 = %src5,
+          %trg6 = trg(%6),
+        }
+      ),
+    }, {
+      %src4 = %src5,
+    }, @physical = hj),
+  }, {
+    %src2 = %src3,
+  }, @physical = hj),
+  {
+  }
+);

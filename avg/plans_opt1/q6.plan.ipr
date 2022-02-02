@@ -1,0 +1,76 @@
+projection(
+  selection(
+    join({
+      selection(
+        join({
+          selection(
+            union({
+              projection(
+                access(%0, "KNOWS"),
+                {
+                  %1 = src(%0),
+                  %0 = %0,
+                  %2 = trg(%0),
+                }
+              ),
+              projection(
+                access(%0, "KNOWS"),
+                {
+                  %1 = trg(%0),
+                  %0 = %0,
+                  %2 = src(%0),
+                }
+              ),
+            }),
+            {
+              label(%1) \ni "Person",
+              label(%2) \ni "Person",
+            }
+          ),
+          selection(
+            union({
+              projection(
+                access(%3, "KNOWS"),
+                {
+                  %4 = src(%3),
+                  %3 = %3,
+                  %5 = trg(%3),
+                }
+              ),
+              projection(
+                access(%3, "KNOWS"),
+                {
+                  %4 = trg(%3),
+                  %3 = %3,
+                  %5 = src(%3),
+                }
+              ),
+            }),
+            {
+              label(%5) \ni "Person",
+            }
+          ),
+        }, {
+          %4 = %2,
+        }, @physical = hj),
+        {
+          %1 != %5,
+          %0 != %3,
+        }
+      ),
+      access(%6, "HAS_INTEREST", @physical = sortedMap, @bind = src),
+    }, {
+      src(%6) = %5,
+    }, @physical = ilj),
+    {
+      %0 != %6,
+      label(trg(%6)) \ni "Tag",
+    }
+  ),
+  {
+    %person1 = %1,
+    %person2 = %2,
+    %person3 = %5,
+    %tag = trg(%6),
+  }
+);
