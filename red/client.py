@@ -24,13 +24,17 @@ def raise_timeout(signum, frame):
 def run_query(session, sf, query_id, query_spec, results_file):
     start = time.time()
     try:
-        with timeout(300):
+        with timeout(1000):
             result = graph.query(query_spec)
     except redis.exceptions.ConnectionError:
         return
     end = time.time()
     duration = end - start
-    results_file.write(f"RedisGraph\t\t{sf}\t{query_id}\t{duration:.4f}\t{result.result_set[0][0]}\n")
+    if result is None or len(result.result_set) == 0 or len(result.result_set[0]) == 0:
+        return
+    else:
+        res=result.result_set[0][0]
+    results_file.write(f"RedisGraph\t\t{sf}\t{query_id}\t{duration:.4f}\t{res}\n")
     results_file.flush()
     return (duration, result)
 
