@@ -1,0 +1,9 @@
+SELECT *
+MATCH
+  (?country :Country),
+  (?person1 :Person)-[IS_LOCATED_IN]->(:City)-[IS_PART_OF]->(?country),
+  (?person2 :Person)-[IS_LOCATED_IN]->(:City)-[IS_PART_OF]->(?country),
+  (?person3 :Person)-[IS_LOCATED_IN]->(:City)-[IS_PART_OF]->(?country),
+  (?person1)-[?know1 KNOWS_BI]->(?person2)-[?know2 KNOWS_BI]->(?person3)-[?know3 KNOWS_BI]->(?person1)
+WHERE 
+  ?know1.id != ?know2.id AND ?know1.id != ?know3.id AND ?know2.id != ?know3.id

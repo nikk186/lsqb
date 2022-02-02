@@ -1,0 +1,5 @@
+SELECT *
+MATCH (?tag1 :Tag)<-[?htag1 HAS_TAG]-(:Message)<-[REPLY_OF]-(:Comment)-[?htag2 HAS_TAG]->(?tag2 :Tag)
+WHERE
+  ?htag1.id != ?htag2.id AND
+  ?tag1 != ?tag2

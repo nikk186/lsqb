@@ -1,0 +1,4 @@
+SELECT *
+MATCH (:Tag)<-[HAS_TAG]-(?message :Message)-[HAS_CREATOR]->(:Person),
+  (?message)<-[LIKES]-(:Person),
+  (?message)<-[REPLY_OF]-(:Comment)

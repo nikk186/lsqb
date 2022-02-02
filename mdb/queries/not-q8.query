@@ -1,0 +1,7 @@
+// TODO: NOT query not supported!
+SELECT ?tag1, ?comment, ?tag2
+MATCH
+  (?tag1 :Tag)<-[HAS_TAG]-(:Message)<-[REPLY_OF]-(?comment :Comment)-[HAS_TAG]->(?tag2 :Tag)
+  NOT (?comment)-[HAS_TAG]->(?tag1 :Tag)
+WHERE
+  ?tag1 != ?tag2

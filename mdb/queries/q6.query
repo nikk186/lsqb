@@ -1,0 +1,5 @@
+SELECT *
+MATCH (?person1 :Person)-[?know1 KNOWS_BI]->(:Person)-[?know2 KNOWS_BI]->(?person3 :Person)-[HAS_INTEREST]->(:Tag)
+WHERE
+  ?know1.id != ?know2.id AND
+  ?person1 != ?person3

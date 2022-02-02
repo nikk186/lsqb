@@ -1,0 +1,4 @@
+SELECT *
+MATCH
+  (?person1 :Person)-[KNOWS_BI]->(?person2 :Person),
+  (?person1)<-[HAS_CREATOR]-(:Comment)-[REPLY_OF]->(:Post)-[HAS_CREATOR]->(?person2)

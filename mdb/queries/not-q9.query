@@ -1,0 +1,8 @@
+// TODO: NOT query not supported!
+SELECT *
+MATCH
+  (?person1 :Person)-[?know1 KNOWS_BI]->(:Person)-[?know2 KNOWS_BI]->(?person3 :Person)-[HAS_INTEREST]->(:Tag),
+  NOT (?person1 :Person)-[?know3 KNOWS_BI]->(?person3 :Person)
+WHERE
+  ?know1 != ?know2 AND ?know1 != ?know3 AND ?know2 != ?know3 AND
+  ?person1 != ?person3

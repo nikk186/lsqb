@@ -21,6 +21,7 @@ elif [[ ! -z $(which apt) ]]; then
 fi
 
 avg/install-dependencies.sh
+mdb/install-dependencies.sh
 
 echo Installing DuckDB
 
