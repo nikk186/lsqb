@@ -134,7 +134,7 @@ if ((! ${#sfuse[@]})); then
     echo ""
 fi
 
-if ((! ${#dbsuse})); then
+if ((! ${#dbsuse[@]})); then
     dbsuse=("${dbsavail[@]}")
 fi
 
