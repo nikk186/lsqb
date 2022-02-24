@@ -77,7 +77,6 @@ echo ""
 
 echo -e "${b}Processing relations${e}"
 i=0
-id=0
 for relation in "${relations[@]}"; do
     split=($(echo ${relation} | tr "=" " "))
     echo -e "${b}[$((++i))/${#relations[@]}] ${bs}Processing relation '${split[0]/:/,}'${es}"
