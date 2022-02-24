@@ -65,11 +65,13 @@ if ! $append ;then
 fi
 
 echo -e "${b}Processing nodes${e}"
+regex_var="[a-zA-Z][a-zA-Z0-9]*"
 i=0
 for node in "${nodes[@]}"; do
     split=($(echo ${node} | tr "=" " "))
     echo -e "${b}[$((++i))/${#nodes[@]}] ${bs}Processing node '${split[0]}'${es}"
-    sed -E "/^[0-9]+$/!d ; s/^([0-9]+)$/N\1 :${split[0]/:/ :}/g" "${split[1]}" >> ${outfile}
+    regex="^([0-9]+)((\ ((:${var})|(${var}:((\"[^\"]*\")|(\-?[1-9][0-9]*)))))*)$"
+    sed -E "/${regex}/!d ; s/${regex}$/N\1 :${split[0]/:/ :}\2/g" "${split[1]}" >> ${outfile}
 done
 echo ""
 
