@@ -50,8 +50,8 @@ if ((${all})); then
             echo "No existing cache files found!"
             exit 0
         fi
-        sf=$(echo "$file" | sed -E "s/^.*graph-data-([0-9a-zA-Z]+)[^0-9a-zA-Z]*$/\1/g")
-        echo "Removing cache file for scaling factor ${sf}."
+        sf=$(echo "$file" | sed -E "s/^.*graph-data-([0-9a-zA-Z\.]+)$/\1/g")
+        echo "Removing cache file for scaling factor '${sf}'."
         rm -rdf "$file"
     done
 else

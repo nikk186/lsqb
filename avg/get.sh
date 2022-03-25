@@ -17,7 +17,6 @@ bs="\033[0;32m"
 ce="\033[0;31m$(tput bold)"
 e="\033[0m$(tput sgr0)"
 user=$([ "${USER}" == "root" ] &&  echo "${SUDO_USER}" || echo "${USER}")
-echo $user
 
 agdir="${AVANTGRAPH_DIR}/avantgraph"
 builddir="${agdir}/cmake-build-performance"
@@ -45,7 +44,6 @@ echo -e "${b}Done${e}\n"
 echo -e "${b}[3/8] Cloning AvantGraph benchmark repo${e}"
 sudo -u "${user}" git clone -b kaj/benchmark ssh://git@git.avantgraph.io:2222/ag/avantgraph.git "${agdir}"
 cd "${agdir}"
-git checkout kaj/benchmark
 echo -e "${b}Done${e}\n"
 
 echo -e "${b}[4/8] Building AvantGraph benchmark${e}"
