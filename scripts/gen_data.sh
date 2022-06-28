@@ -62,7 +62,7 @@ for arg in "$@"; do
     fi
 done
 
-if ((${preponly})) && ((! ${dobuild})); then
+if ((! ${preponly})) && ((! ${dobuild})); then
     # Force build when resources are not build.
     if [ ! -d ${gendir} ] && [ ! -d ${convdir} ]; then
         dobuild=1
