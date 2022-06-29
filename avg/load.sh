@@ -18,8 +18,8 @@ bc="\033[0;33m$(tput bold)"
 c="\033[0;33m"
 ebc="\033[0m$(tput sgr0)"
 
-# Load graph
-start=`date +%s.%N`
+loadtime=0
+indextime=0
 
 if ((${AVANTGRAPH_CACHE})) && [[ $(md5sum -c "${AVANTGRAPH_CHECKSUMS}/checklist_${SF}.chk" > /dev/null 2>&1; echo $?) == 0 ]]; then
     echo "Using cached graph!"
@@ -27,6 +27,9 @@ else
     if ((${AVANTGRAPH_CACHE})); then
         echo "No cached graph found, generating from scratch..."
     fi
+
+    # Load graph
+    start=`date +%s.%N`
 
     BASE=${IMPORT_DATA_DIR_PROJECTED_FK}
     TARGET=${AVANTGRAPH_GRAPH}
@@ -86,22 +89,21 @@ else
             --relationships=WORK_AT="${BASE}/Person_workAt_Company.csv" \
             --delimiter '|') \
         ${TARGET}/
+    end=`date +%s.%N`
+    loadtime=$(echo "$end - $start" | bc -l | awk '{printf "%f", $0}')
+
+    # Make index(es) TODO
+    start=`date +%s.%N`
+    #${AVANTGRAPH_BINARIES}/ag-index create --type=label-adjacency:multimap ${AVANTGRAPH_GRAPH}
+    end=`date +%s.%N`
+    indextime=$(echo "$end - $start" | bc -l | awk '{printf "%f", $0}')
+
     if ((${AVANTGRAPH_CACHE})); then
         echo "Computing checksum..."
         find ${BASE}/* -type f -exec md5sum "{}" + > "${AVANTGRAPH_CHECKSUMS}/checklist_${SF}.chk"
         find ${TARGET}/* -type f -exec md5sum "{}" + >> "${AVANTGRAPH_CHECKSUMS}/checklist_${SF}.chk"
     fi
 fi
-end=`date +%s.%N`
-loadtime=$(echo "$end - $start" | bc -l | awk '{printf "%f", $0}')
-
-
-# Make index(es) TODO
-start=`date +%s.%N`
-#${AVANTGRAPH_BINARIES}/ag-index create --type=label-edge:vector ${AVANTGRAPH_GRAPH}
-end=`date +%s.%N`
-indextime=$(echo "$end - $start" | bc -l | awk '{printf "%f", $0}')
-
 
 # Plan queries
 start=`date +%s.%N`

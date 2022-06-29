@@ -8,7 +8,7 @@ AVANTGRAPH_BINARIES=`pwd`/avg/avantgraph-binaries
 AVANTGRAPH_LOAD_SCRIPT=${AVANTGRAPH_BINARIES}/contrib/import_csv.py
 
 AVANTGRAPH_SRC_QUERIES=`pwd`/avg/queries
-AVANTGRAPH_SRC_PLANS=`pwd`/avg/plans_opt3
+AVANTGRAPH_SRC_PLANS=`pwd`/avg/plans_tmp
 # Set to 1 for plans,plans_opt1 and plans_opt2, set to 0 for plans_opt3
 AVANTGRAPH_PUSHDOWN=$([[ $(basename ${AVANTGRAPH_SRC_PLANS}) != "plans_opt3" ]] && echo 1 || echo 0)
 # Set to 1 for using cache, 0 for no cache.
