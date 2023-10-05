@@ -1,6 +1,8 @@
 # Labelled Subgraph Query Benchmark (LSQB)
 
-:page_facing_up: [LSQB: A Large-Scale Subgraph Query Benchmark](https://dl.acm.org/doi/pdf/10.1145/3461837.3464516), GRADES-NDA'21 paper ([presentation](https://docs.google.com/presentation/d/1xUbooiL8rIMzkp9G9EXmN4tIMMWt2mC53Q0u4mslq5g))
+[![Build Status](https://circleci.com/gh/ldbc/lsqb.svg?style=svg)](https://circleci.com/gh/ldbc/lsqb)
+
+:page_facing_up: [LSQB: A Large-Scale Subgraph Query Benchmark](https://dl.acm.org/doi/pdf/10.1145/3461837.3464516), GRADES-NDA'21 paper ([presentation](https://docs.google.com/presentation/d/13B5XwwSlgi-r3a9tKNxo8HmdIRzegO6FMB-M6I1RW0I))
 
 ## Overview
 
@@ -60,7 +62,18 @@ An example data set is provided with the substitution `SF=example`:
 * `data/social-network-sfexample-merged-fk`
 
 Pre-generated data sets are available in the [SURF/CWI data repository](https://repository.surfsara.nl/datasets/cwi/lsqb).
-See the [download instructions and links](https://github.com/ldbc/data-sets-surf-repository/#labelled-subgraph-query-benchmark-lsqb).
+
+To download the data sets, set the `MAX_SF` environment variable to the size of the maximum scale factor you want to use (at least `1`) and run the download script.
+
+For example:
+
+```bash
+export MAX_SF=3
+scripts/download-projected-fk-data-sets.sh
+scripts/download-merged-fk-data-sets.sh
+```
+
+For more information, see the [download instructions and links](https://github.com/ldbc/data-sets-surf-repository/#labelled-subgraph-query-benchmark-lsqb).
 
 #### Generating the data sets from scratch
 
@@ -101,7 +114,7 @@ Stable implementations:
 
 * `umb`: [Umbra](https://umbra-db.com/) [SQL] :whale:
 * `hyp`: [HyPer](https://hyper-db.de/) [SQL] :whale:
-* `ddb`: [DuckDB](https://www.duckdb.org/) [SQL] (bare metal)
+* `ddb`: [DuckDB](https://www.duckdb.org/) [SQL] (embedded)
 * `pos`: [PostgreSQL](https://www.postgresql.org/) [SQL] :whale:
 * `mys`: [MySQL](https://www.mysql.com/) [SQL] :whale:
 * `neo`: [Neo4j Community Edition](https://neo4j.com/) [Cypher] :whale:
@@ -109,7 +122,11 @@ Stable implementations:
 * `mem`: [Memgraph](https://memgraph.com/) [Cypher] :whale:
 * `vos`: [Virtuoso Open-Source Edition](http://vos.openlinksw.com/owiki/wiki/VOS) [SPARQL] :whale:
 * `xgt`: [Trovares xGT](https://www.trovares.com/) [Cypher] :whale:
-* `rdm`: [RapidMatch](https://github.com/RapidsAtHKUST/RapidMatch) [`.graph`]
+* `rdm`: [RapidMatch](https://github.com/RapidsAtHKUST/RapidMatch) [`.graph`] (separate process)
+
+WIP implementations:
+
+* `kuz`: [Kùzu](https://kuzudb.com/) [Cypher] (embedded)
 
 :warning: Both Neo4j and Memgraph use the Bolt protocol for communicating with the client.
 To avoid clashing on port `7687`, the Memgraph instance uses port `27687` for its Bolt communication.
@@ -148,6 +165,16 @@ export SF
 for SF in 0.1 0.3 1; do
    ./init-and-load.sh && ./run.sh && ./stop.sh
 done
+```
+
+## Cross-validation
+
+Used the `cross-validate.sh` script. For example:
+
+```bash
+scripts/cross-validate.sh --system DuckDB --variant "10 threads" --scale_factor 1
+scripts/cross-validate.sh --system Neo4j --scale_factor 0.1
+scripts/cross-validate.sh --system PostgreSQL --scale_factor example
 ```
 
 ## Philosophy

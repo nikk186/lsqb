@@ -1,3 +1,2 @@
-DUCKDB_DIR=`pwd`/ddb/scratch
-DUCKDB_BINARY=`pwd`/ddb/scratch/duckdb
-DUCKDB_VERSION=0.5.1
+export DUCKDB_DIR=`pwd`/ddb/scratch
+export DUCKDB_VERSION=0.7.1

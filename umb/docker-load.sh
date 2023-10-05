@@ -7,6 +7,5 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ..
 
 . umb/vars.sh
-. scripts/import-vars.sh
 
-python3 pos/client.py ${SF} Umbra $@
+curl -s ${UMBRA_URL_PREFIX}${UMBRA_VERSION}.tar.gz | docker load
